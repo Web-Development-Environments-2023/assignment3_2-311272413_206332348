@@ -1,3 +1,5 @@
+const { getRecipeDetails } = require("./recipes_utils");
+
 const DButils = require("./DButils");
 
 async function markAsFavorite(user_id, recipe_id){
@@ -47,7 +49,9 @@ await DButils.execQuery(`
 async function getWatchedRecipes(user_id){
     const watched = await DButils.execQuery(`select * from lastwatched where user_id=${user_id}`);
     const recipeIds = Object.values(watched[0]).slice(1);
-    return recipeIds;
+
+    const recipeDetailsPromises = recipeIds.map((recipeID) => getRecipeDetails(recipeID));
+    return await Promise.all(recipeDetailsPromises);
 };
 
 
