@@ -19,6 +19,7 @@ router.use(async function (req, res, next) {
     res.sendStatus(401);
   }
 });
+router.get("/", (req, res) => res.send("im here"));
 
 
 /**
@@ -52,6 +53,32 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
+
+
+
+// module.exports = router;
+
+router.post('/watchedRecipe', async (req, res, next) =>{
+  try{
+    const user_id = req.body.user_id;
+    const recipe_id = req.body.recipe_id;
+    await user_utils.markRecipeAsWatched(user_id,recipe_id);
+    res.status(200).send("The Recipe successfully saved as watched");
+    } catch(error){
+    next(error);
+  }
+});
+
+router.get('/watchedRecipe', async (req, res, next) => {
+  try{
+    console.log(req.session);
+    const user_id = req.body.user_id;
+    const recipes_id = await user_utils.getWatchedRecipes(user_id);
+    res.status(200).send(recipes_id);
+  } catch(error){
+    next(error); 
+  }
+});
 
 
 
