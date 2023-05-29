@@ -3,7 +3,10 @@ var router = express.Router();
 const MySql = require("../routes/utils/MySql");
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcrypt");
+const { getWatchedRecipes } = require("./utils/user_utils");
+
 var onlineUser = null;
+let watchedRecipes = [];
 
 router.post("/Register", async (req, res, next) => {
   try {
@@ -56,7 +59,7 @@ router.post("/Login", async (req, res, next) => {
   try {
     if(onlineUser !== null)
       throw { status: 400, message: "You are already logged in." };
-      
+    
     // check that username exists
     const users = await DButils.execQuery("SELECT username FROM users");
     if (!users.find((x) => x.username === req.body.username))
@@ -75,7 +78,8 @@ router.post("/Login", async (req, res, next) => {
 
     // Set cookie
     req.session.user_id = user.user_id;
-
+    watchedRecipes = getWatchedRecipes(user.user_id);
+    req.session.watchedRecipes= watchedRecipes;
 
     // return cookie
     res.status(200).send({ message: "login succeeded", success: true });
@@ -86,8 +90,10 @@ router.post("/Login", async (req, res, next) => {
 });
 
 router.post("/Logout", function (req, res) {
+  markRecipeAsWatched(req.session.user_id, watchedRecipes);
   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
   res.send({ success: true, message: "logout succeeded" });
+  watchedRecipes = [];
   onlineUser = null;
 });
 

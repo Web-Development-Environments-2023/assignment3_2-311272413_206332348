@@ -6,13 +6,32 @@ router.get("/", (req, res) => res.send("im here"));
 
 /**
  * This path returns details of 3 different recipes
- * https://api.spoonacular.com/recipes/random?number=3
+ * https://api.spoonacular.com/recipes/random
  */
 router.get("/random", async (req, res, next) => {
   try {
     const recipes = await recipes_utils.getRandomRecipes(3);
     res.send(recipes);
   } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * this path recives the recipe_id sent as a parameter all needed parameters
+ * http://localhost:3000/recipes/watchRecipe
+ * {
+ *    "recipe_id":648852
+ * }
+ */
+
+
+router.get('/watchRecipe', async (req,res,next)=>{
+  try{
+    const recipeId = req.body.recipe_id;
+    const recipeInfo = await recipes_utils.getRecipeFullDetails(recipeId);
+    res.status(200).send(recipeInfo);
+  } catch(error){
     next(error);
   }
 });
@@ -30,9 +49,6 @@ router.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-router.get('/watchRecipe', async (req,res,next)=>{
-  const recipeInfo = await recipes_utils.getRecipeFullDetails(req.params.recipeId);
-  
-});
+
 
 module.exports = router;

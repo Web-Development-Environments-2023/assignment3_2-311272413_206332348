@@ -6,7 +6,11 @@ const api_domain = "https://api.spoonacular.com/recipes";
  * @param {*} recipes_info 
  */
 
-
+/**
+ * @param {*} recipe_id 
+ * @returns information json from spoonacular api
+ * id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree
+ */
 async function getRecipeInformation(recipe_id) {
     return await axios.get(`${api_domain}/${recipe_id}/information`, {
         params: {
@@ -33,6 +37,10 @@ async function getRecipeDetails(recipe_id) {
     }
 }
 
+/**
+ * @param {*} number - of recipes to return
+ * @returns json with number of random recipes out of the spoonacular api
+ */
 async function getRandomRecipes(number) {
     const response = await axios.get(`${api_domain}/random`, {
         params: {
@@ -60,7 +68,12 @@ async function getRandomRecipes(number) {
     return recipes;
   }
 
-
+/**
+ * @param {*} recipe_id 
+ * @returns the information abour recipe_id
+ * id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree, servings, instructions
+ * and a list of all ingidient with their name, amount and unit meseaured
+ */
   async function getRecipeFullDetails(recipe_id) {
     let recipe_info = await getRecipeInformation(recipe_id);
     let ingredients = [];
