@@ -24,19 +24,19 @@ async function getFavoriteRecipes(user_id){
  * @param {*} recipe_id - recipe watched by the user
  * @returns 
  */
-async function markRecipeAsWatched(user_id, recipes){
+async function markRecipeAsWatched(user_id, recipeID_1,recipeID_2,recipeID_3){
     const userWatchedRecipes = await DButils.execQuery(`select * from lastwatched where user_id = ${user_id}`);
     if (userWatchedRecipes.length === 0){
         await DButils.execQuery(`insert into lastwatched (user_id, recipeID_1, recipeID_2, recipeID_3)
-         values (${user_id}, ${recipes[0]}, ${recipes[1]}, ${recipes[2]});`);
+         values (${user_id}, ${recipeID_1}, ${recipeID_2}, ${recipeID_3});`);
         return;
     }
 
 await DButils.execQuery(`
     UPDATE lastwatched
-    SET recipeID_1 = ${recipes[0]},
-        recipeID_2 = ${recipes[1]},
-        recipeID_3 = ${recipes[2]}
+    SET recipeID_1 = ${recipeID_1},
+        recipeID_2 = ${recipeID_2},
+        recipeID_3 = ${recipeID_3}
     WHERE user_id = ${user_id};
 `);
 };

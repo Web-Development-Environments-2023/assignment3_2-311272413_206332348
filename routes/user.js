@@ -57,9 +57,14 @@ router.get('/favorites', async (req,res,next) => {
 // change to sending a list of id's
 router.post('/watchedRecipes', async (req, res, next) =>{
   try{
-    const user_id = req.body.user_id;
-    const recipe_id = req.body.recipe_id;
-    await user_utils.markRecipeAsWatched(user_id,recipe_id);
+    const {
+      user_id,
+      recipeID_1,
+      recipeID_2,
+      recipeID_3,
+    } = req.body;
+
+    await user_utils.markRecipeAsWatched(user_id,recipeID_1,recipeID_2,recipeID_3);
     res.status(200).send("The Recipe successfully saved as watched");
     } catch(error){
     next(error);
