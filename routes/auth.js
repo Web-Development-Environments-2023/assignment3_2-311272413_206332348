@@ -3,7 +3,7 @@ var router = express.Router();
 const MySql = require("../routes/utils/MySql");
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcrypt");
-const { getWatchedRecipes } = require("./utils/user_utils");
+const { getLastWatchedRecipes } = require("./utils/user_utils");
 
 var onlineUser = null;
 let watchedRecipes = [];
@@ -78,7 +78,7 @@ router.post("/Login", async (req, res, next) => {
 
     // Set cookie
     req.session.user_id = user.user_id;
-    watchedRecipes = getWatchedRecipes(user.user_id);
+    watchedRecipes = getLastWatchedRecipes(user.user_id);
     req.session.watchedRecipes= watchedRecipes;
 
     // return cookie

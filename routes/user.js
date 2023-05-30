@@ -53,9 +53,11 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
-// pass this??? - user a dynamic list instead
-// change to sending a list of id's
-router.post('/watchedRecipes', async (req, res, next) =>{
+
+/**
+ * this path sends the 3 last watched recipes by user_id 
+ */
+router.post('/lastWatchedRecipes', async (req, res, next) =>{
   try{
     const {
       user_id,
@@ -72,10 +74,13 @@ router.post('/watchedRecipes', async (req, res, next) =>{
 });
 
 
-router.get('/watchedRecipes', async (req, res, next) => {
+/**
+ * this path return last 3 watched recipes of user_id
+ */
+router.get('/lastWatchedRecipes', async (req, res, next) => {
   try{
     const user_id = req.body.user_id;
-    const recipes_id = await user_utils.getWatchedRecipes(user_id);
+    const recipes_id = await user_utils.getLastWatchedRecipes(user_id);
     res.status(200).send(recipes_id);
   } catch(error){
     next(error); 

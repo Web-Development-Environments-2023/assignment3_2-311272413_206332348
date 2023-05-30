@@ -46,7 +46,7 @@ await DButils.execQuery(`
  * @param {*} user_id 
  * @returns list of 3 latest watched recipes of user_id
  */
-async function getWatchedRecipes(user_id){
+async function getLastWatchedRecipes(user_id){
     const watched = await DButils.execQuery(`select * from lastwatched where user_id=${user_id}`);
     const recipeIds = Object.values(watched[0]).slice(1);
 
@@ -58,5 +58,5 @@ async function getWatchedRecipes(user_id){
 exports.markAsFavorite = markAsFavorite;
 exports.getFavoriteRecipes = getFavoriteRecipes;
 exports.markRecipeAsWatched = markRecipeAsWatched;
-exports.getWatchedRecipes = getWatchedRecipes;
+exports.getLastWatchedRecipes = getLastWatchedRecipes;
 
