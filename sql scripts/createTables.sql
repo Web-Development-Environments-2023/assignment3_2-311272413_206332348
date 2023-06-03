@@ -19,8 +19,8 @@ CREATE TABLE FavoriteRecipes (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-DROP TABLE IF EXISTS lastWatched;
-CREATE TABLE lastWatched(
+DROP TABLE IF EXISTS lastSeen;
+CREATE TABLE lastSeen(
     user_id int NOT NULL,
     recipeID_1 VARCHAR(100),
     recipeID_2 VARCHAR(100),
@@ -76,10 +76,10 @@ CREATE TABLE usersRecipes (
 -- );
 
 
--- -- lastWatched table
--- DROP TABLE IF EXISTS `grammy`.`lastWatched`;
+-- -- lastSeen table
+-- DROP TABLE IF EXISTS `grammy`.`lastSeen`;
 
--- CREATE TABLE `grammy`.`lastWatched`(
+-- CREATE TABLE `grammy`.`lastSeen`(
 --     user_id INT NOT NULL,
 --     recipeID_1 VARCHAR(100),
 --     recipeID_2 VARCHAR(100),

@@ -67,7 +67,7 @@ async function getRandomRecipes(number) {
     });
   
     return recipes;
-  }
+}
 
 /**
  * @param {*} recipe_id 

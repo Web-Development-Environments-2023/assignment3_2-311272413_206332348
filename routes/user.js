@@ -56,7 +56,7 @@ router.get('/favorites', async (req,res,next) => {
 });
 
 /**
- * this path sends the 3 last watched recipes by user_id 
+ * this path sends the 3 last seen recipes by user_id 
  */
 router.post('/lastSeenRecipes', async (req, res, next) =>{
   try{
@@ -67,21 +67,21 @@ router.post('/lastSeenRecipes', async (req, res, next) =>{
       recipeID_3,
     } = req.body;
 
-    await user_utils.markRecipeAsWatched(user_id,recipeID_1,recipeID_2,recipeID_3);
-    res.status(200).send("The Recipe successfully saved as watched");
+    await user_utils.markRecipeAsSeen(user_id,recipeID_1,recipeID_2,recipeID_3);
+    res.status(200).send("The Recipe successfully saved as seen");
     } catch(error){
     next(error);
   }
 });
 
 /**
- * this path return last 3 watched recipes of user_id
+ * this path return last 3 seen recipes of user_id
  */
 router.get('/lastSeenRecipes', async (req, res, next) => {
   try{
     console.log(req.session.user_id);
     const user_id = req.session.user_id;
-    const recipes_id = await user_utils.getLastWatchedRecipes(user_id);
+    const recipes_id = await user_utils.getLastSeenRecipes(user_id);
     res.status(200).send(recipes_id);
   } catch(error){
     next(error); 

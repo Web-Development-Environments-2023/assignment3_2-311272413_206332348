@@ -205,7 +205,6 @@ paths:
         "404":
           description: recipeId is not exists
 
-
   /users/addNewUserRecipe:
     get:
       tags:
@@ -247,16 +246,16 @@ paths:
           description: user is not authorized
       security:
         - cookieAuth: []
-  /users/watchedRecipe:
+  /users/lastSeenRecipes:
     get:
       tags:
       - Users
-      summary: Get user's last watched recipes.
-      description: Retrieves the details of a user's last watched recipes.
-      operationId: detailLastWatchedRecipes
+      summary: Get user's last lastSeen recipes.
+      description: Retrieves the details of a user's last seen recipes.
+      operationId: detailLastSeenRecipes
       responses:
         "200":
-          description: Details of a user's last watched recipes.
+          description: Details of a user's last seen recipes.
           content:
             application/json:
               schema:
@@ -268,8 +267,8 @@ paths:
     post:
       tags:
       - Users
-      summary: Add a recipe to user's last watched.
-      description: Adds a new recipe to the last watched recipes of the logged-in user.
+      summary: Add a recipe to user's last seen.
+      description: Adds a new recipe to the last seen recipes of the logged-in user.
       requestBody:
         content:
           application/json:
@@ -278,7 +277,7 @@ paths:
         required: true
       responses:
         "201":
-          description: A new recipe has been added to the last watched recipes.
+          description: A new recipe has been added to the last seen recipes.
         "400":
           description: Wrong input parameter.
   /users/familyRecipes:
