@@ -13,8 +13,8 @@ DROP TABLE IF EXISTS FavoriteRecipes;
 
 CREATE TABLE FavoriteRecipes (
     user_id int NOT NULL,
-    recipeID VARCHAR(100),
-    PRIMARY KEY (user_id, recipeID),
+    recipe_id VARCHAR(100),
+    PRIMARY KEY (user_id, recipe_id),
     INDEX user_id_idx (user_id ASC),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

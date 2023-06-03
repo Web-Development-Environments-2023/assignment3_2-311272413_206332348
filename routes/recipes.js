@@ -6,10 +6,12 @@ const recipes = require("./auth");
 
 router.get("/", (req, res) => res.send("im here"));
 
+
+//----------------checked----------------
+
 /**
  * This path returns details of 3 different recipes
- * https://api.spoonacular.com/recipes/random
- * ----checked----
+ * usage: http://localhost:3000/recipes/random
  */
 router.get("/random", async (req, res, next) => {
   try {
@@ -22,30 +24,30 @@ router.get("/random", async (req, res, next) => {
 
 /**
  * this path recives the recipe_id sent as a parameter all needed parameters
- * http://localhost:3000/recipes/watchRecipe/648852
- * ----checked----
+ * usage: http://localhost:3000/recipes/watchRecipe/648852
  */
 router.get('/showRecipe/:recipe_id', async (req,res,next)=>{
   try{
     const recipeId = req.params.recipe_id;
-    const recipeInfo = await recipes_utils.getRecipeFullDetails(recipeId);
+    const recipeInfo = await recipes_utils.getRecipeFullDetails(parseInt(recipeId));
     res.status(200).send(recipeInfo);
   } catch(error){
     next(error);
   }
 });
 
-/*
-values
-intolerance = Dairy, ,Egg, Gluten, Grain, Peanut, Seafood, Sesame, Shellfish, Soy ,Sulfite ,Tree Nut, Wheat
-cusine = African, Asian, American, British, Cajun, Caribbean, Chinese, Eastern European, European, French
+/**
+ * possible values
+ * values
+ * intolerance = Dairy, ,Egg, Gluten, Grain, Peanut, Seafood, Sesame, Shellfish, Soy ,Sulfite ,Tree Nut, Wheat
+ * cusine = African, Asian, American, British, Cajun, Caribbean, Chinese, Eastern European, European, French
          German, Greek, Indian, Irish, Italian ,Japanese ,Jewish ,Korean , Latin American, Mediterranean, Mexican
          Middle Eastern, Nordic, Southern, Spanish, Thai, Vietnamese
-diet = Gluten Free, Ketogenic, Vegetarian, Lacto-Vegetarian, Ovo-Vegetarian, Vegan, Pescetarian, Paleo, Primal, Low FODMAP, Whole30
-"/search/query/:searchQuery = query(RecipeName or FoodName) /amount/:num ? Cusine='' & diet=''.'' & intolerance='' "
-*/
-
-//http://localhost:3000/recipes/search/query/burger/amount/5?intolerance=Sesame&cusine=German&diet=Gluten Free
+ * diet = Gluten Free, Ketogenic, Vegetarian, Lacto-Vegetarian, Ovo-Vegetarian, Vegan, Pescetarian, Paleo, Primal, Low FODMAP, Whole30
+ * usage: http://localhost:3000/recipes/search/query/burger?amount=5&intolerance=Sesame&cusine=German&diet=Gluten Free
+ * in frontend - client - there will be only 3 options -> 5(default), 10, 15
+ * now every number is allowd but from client side only 3 legal options.
+ */
 router.get("/search/query/:searchQuery", async (req, res, next) => {
   const searchQuery = req.params.searchQuery;
   // set search params
@@ -53,15 +55,19 @@ router.get("/search/query/:searchQuery", async (req, res, next) => {
   searchParams.query = searchQuery;
 
   let {number, intolerance, Cuisine ,diet} = req.query;
-  searchParams.intolerance = intolerance;
-  searchParams.Cuisine = Cuisine;
   
-  searchParams.number = 5;
-  if (number !== undefined) {
-    searchParams.number = number;
+  if(intolerance)
+    searchParams.intolerance = intolerance;
+  if(Cuisine)
+    searchParams.Cuisine = Cuisine;
+
+  searchParams.number = parseInt(number);
+  if (number === undefined) {
+    searchParams.number = 5;
   }
 
-  searchParams.diet = diet;
+  if(diet)
+    searchParams.diet = diet;
   searchParams.instructionsRequired = true;
   searchParams.addRecipeInformation = true;
   searchParams.fillIngredients = true;
@@ -90,8 +96,7 @@ router.get("/history", async(req, res, next) =>{
 
 /**
  * This path returns a full details of a recipe by its id
- * localhost:3000/recipes/657917
- * ----checked----
+ * usage: localhost:3000/recipes/getRecipe/657917
  */
 router.get("/getRecipe/:recipeId", async (req, res, next) => {
   try {
@@ -143,7 +148,7 @@ router.post('/addRecipe', async (req, res, next) => {
     recipe.user_id = user_id;
     
     // Call the saveRecipe function to save the recipe in the database
-    await recipe_utils.addRecipe(recipe);
+    await recipes_utils.addRecipe(recipe);
     
     res.status(200).send("Recipe successfully saved");
   } catch (error) {

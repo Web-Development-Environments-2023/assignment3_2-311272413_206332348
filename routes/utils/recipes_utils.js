@@ -133,6 +133,21 @@ async function addRecipe(recipe) {
     }
   }
 
+  /**
+   * no need in authentication because getting here, meaning user is logged in and authenticated in user.js
+   * @param {*} recipes_array - favorites from users db
+   * @returns array with recipes information
+   */
+  async function getRecipesPreview(recipes_array){
+    let recipes_details = []
+    recipes_array.map((id) => {recipes_details.push(getRecipeDetails(id));
+    });
+  let info_res = await Promise.all(recipes_details);
+  return info_res;
+}
+
   exports.getRecipeDetails = getRecipeDetails;
   exports.getRandomRecipes = getRandomRecipes;
   exports.getRecipeFullDetails = getRecipeFullDetails;
+  exports.addRecipe = addRecipe;
+  exports.getRecipesPreview = getRecipesPreview;

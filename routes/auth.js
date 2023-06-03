@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const user_utils = require("./utils/user_utils");
 
 var onlineUser = null;
-let watchedRecipes = [];
 
 /**
  * ----checked----
@@ -81,8 +80,6 @@ router.post("/Login", async (req, res, next) => {
 
     // Set cookie
     req.session.user_id = user.user_id;
-    watchedRecipes = await user_utils.getLastWatchedRecipes(user.user_id);
-    req.session.watchedRecipes= watchedRecipes;
 
     // return cookie
     res.status(200).send({ message: "login succeeded", success: true });
@@ -92,15 +89,9 @@ router.post("/Login", async (req, res, next) => {
   }
 });
 
-
-/**
- * ---- not checked ----
- */
 router.post("/Logout", function (req, res) {
-  user_utils.markRecipeAsWatched(req.session.user_id, watchedRecipes);
   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
   res.send({ success: true, message: "logout succeeded" });
-  watchedRecipes = [];
   onlineUser = null;
 });
 
