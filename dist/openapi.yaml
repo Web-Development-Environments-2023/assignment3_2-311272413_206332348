@@ -204,26 +204,49 @@ paths:
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
-  /users/recipes/addRecipe:
+
+
+  /users/addNewUserRecipe:
+    get:
+      tags:
+        - Users
+      summary: Return the recipes that were saved by user
+      description: Get an array of recipes that were saved by a specific user
+      responses:
+        "200":
+          description: data about the user's favorites recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipePreview"
+        "401":
+          description: user is not authorized
+        "404":
+          description: user recepies doesn't exist.
+      security:
+        - cookieAuth: []
     post:
       tags:
-      - Users
-      - Recipes
-      summary: Add a recipe to the database.
-      description: Allows a user to add a recipe to the database.
+        - Users
+      summary: save recipe in my recipes list of a user
+      description: save recipe in my recipes list of a user
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Recipe'
+              $ref: "#/components/schemas/RecipePreview"
         required: true
       responses:
         "201":
-          description: Recipe successfully saved to the database
+          description: The Recipe successfully saved
         "400":
-          description: Failed to upload the recipe. Invalid parameters or missing data.
-        "403":
-          description: Forbidden. User does not have permission to add a recipe.
+          description: the Recipe upload faild, wrong parmters
+        "401":
+          description: user is not authorized
+      security:
+        - cookieAuth: []
   /users/watchedRecipe:
     get:
       tags:
@@ -385,53 +408,105 @@ components:
           description: Password should contain at least one number and one special character.
           format: password
           example: pass123!
-      description: Object containing login credentials.
+      description: Object containing login credentials.   
     RecipePreview:
       required:
-      - RecipeId
-      - RecipeImg
-      - RecipeLikes
-      - RecipeName
-      - RecipeTime
-      - isGlutenFree
-      - isVegan
-      - isVegetarian
+        - fullRecipe
+        - user_id
+        - glutenFree
+        - image
+        - popularity
+        - readyInMinutes
+        - title
+        - vegan
+        - vegetarian
       type: object
       properties:
-        RecipeId:
+        user_id:
           type: integer
-          description: The unique id of the recipe.
-          example: 122
-        RecipeName:
+          description: the recipe owner user identifier
+        title:
           type: string
-          description: The name of the recipe.
-          example: Chocolate Brownies
-        RecipeImg:
+          description: the recipe name
+          example: Pizza
+        image:
           type: string
-          description: The URL of the recipe image.
+          description: the recipe img
           format: url
-          example: https://images.immediate.co.uk/production/volatile/sites/30/2020/10/Gooey-Brownies-5627e49.jpg
-        RecipeTime:
+          example: "https://sugarspunrun.com/wp-content/uploads/2023/02/sourdough-pizza-dough-recipe-6-of-8.jpg"
+        readyInMinutes:
           type: integer
-          description: The total preparation time of the recipe in minutes.
-          example: 60
-        RecipeLikes:
+          description: the recipe total preparation time in minutes
+          example: 30
+        popularity:
           type: integer
-          description: The number of likes received by the recipe.
-          example: 250
-        isVegan:
+          description: how many likes got this recipe
+          example: 200
+        vegan:
           type: boolean
-          description: Indicates whether the recipe is suitable for a vegan diet.
-          example: true
-        isVegetarian:
-          type: boolean
-          description: Indicates whether the recipe is suitable for a vegetarian diet.
-          example: true
-        isGlutenFree:
-          type: boolean
-          description: Indicates whether the recipe is gluten-free.
+          description: indication if the recipe is vegan
           example: false
-      description: Preview information for a recipe.
+        vegetarian:
+          type: boolean
+          description: indication if the recipe is vegetarian
+          example: true
+        glutenFree:
+          type: boolean
+          description: indication if the recipe is gluten free
+          example: false
+        fullRecipe:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/FullRecipe"
+          description: Full Recipe with the ingredients as keys and amount as value
+    FullRecipe:
+      required:
+        - instructions
+        - servings
+        - ingredients
+      type: object
+      properties:
+        ingredients:
+          type: array
+          description: recipe ingredients
+          example:
+            - name: dough
+              amount: 500
+              unit: g
+            - name: tomato sauce
+              amount: 200
+              unit: g
+            - name: mozzarella cheese
+              amount: 200
+              unit: g
+            - name: toppings
+              amount: "as desired"
+              unit: ""
+          items:
+            $ref: "#/components/schemas/RecipeIngredient"
+        servings:
+          type: integer
+          example: 4
+          description: number of servings the recipe produces
+        instructions:
+          type: string
+          example: "1. Roll out the dough. 2. Spread tomato sauce on the dough. 3. Add cheese and desired toppings. 4. Bake in the oven at 200°C for 15-20 minutes. 5. Enjoy your homemade pizza!"
+          description: recipe instructions
+    RecipeIngredient:
+      type: object
+      properties:
+        name:
+          type: string
+          # example: suger
+        amount:
+          type: integer
+          # example: 200
+        unit:
+          type: string
+          # example: g
+
+
+    
     Recipe:
       required:
       - Instructions
@@ -697,3 +772,9 @@ components:
 #           description: indication if the recipe is gluten free
 #           example: false
   
+
+
+
+
+
+

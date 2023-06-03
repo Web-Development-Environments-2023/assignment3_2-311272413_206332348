@@ -4,9 +4,7 @@ const DButils = require("./utils/DButils");
 const user_utils = require("./utils/user_utils");
 const recipe_utils = require("./utils/recipes_utils");
 
-
 //----------------checked----------------
-
 
 
 /**
@@ -89,6 +87,39 @@ router.get('/lastWatchedRecipes', async (req, res, next) => {
     res.status(200).send(recipes_id);
   } catch(error){
     next(error); 
+  }
+});
+
+
+/*
+ * Add new recipe as a logged user
+ */
+router.post('/addNewUserRecipe', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    const recipe = req.body;
+    
+    // Call the saveRecipe function to save the recipe in the database
+    await user_utils.saveNewUserRecipe(recipe, user_id);
+    
+    res.status(200).send("The Recipe was successfully saved to the user's recipes");
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/getUserRecipes', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    recipes = await user_utils.getUserRecipes(user_id);
+    if (recipes.length == 0){
+      res.sendStatus(404)
+    }
+    else{
+      res.status(200).send(recipes);
+    }
+  } catch (error) {
+    next(error);
   }
 });
 

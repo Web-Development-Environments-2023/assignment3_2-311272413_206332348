@@ -29,10 +29,12 @@ CREATE TABLE lastWatched(
         FOREIGN KEY (user_id)
         REFERENCES users (user_id));
 
+DROP TABLE IF EXISTS usersRecipes;
+
 CREATE TABLE usersRecipes (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NOT NULL,
-  title VARCHAR 100 NOT NULL,
+  title VARCHAR (100) NOT NULL,
   image LONGTEXT NOT NULL,
   readyInMinutes INT NOT NULL,
   popularity INT NOT NULL,

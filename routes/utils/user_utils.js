@@ -1,6 +1,8 @@
 const { getRecipeDetails } = require("./recipes_utils");
 
 const DButils = require("./DButils");
+const binarySet = {"true" : 1, "false" : 0};
+const binaryGet = {1 : true, 0 : false};
 
 async function markAsFavorite(user_id, recipe_id){
     await DButils.execQuery(`insert into FavoriteRecipes values ('${user_id}',${recipe_id})`);
@@ -11,11 +13,9 @@ async function getFavoriteRecipes(user_id){
     return recipes_id;
 }
 
-
 /**
  * maybe better to save list of recipes when user is getting online,
  * and update it while connected, update the list when signs out??
- * 
  * 
  * table is structred like - user_id, recipeID_1, recipeID_2, recipeID_3
  * recipeID_1 will be the first watched, then move 1 to 2 and then to 3
@@ -42,7 +42,6 @@ await DButils.execQuery(`
 };
 
 /**
- * 
  * @param {*} user_id 
  * @returns list of 3 latest watched recipes of user_id
  */
@@ -57,30 +56,48 @@ async function getLastWatchedRecipes(user_id){
     return await Promise.all(recipeDetailsPromises);
 };
 
-async function addUserRecipe(recipeDetails, user_id) {
-    const {
-    title,
-    readyInMinutes,
-    image,
-    popularity,
-    vegan,
-    vegetarian,
-    glutenFree,
-    FullRecipe
-    // servings,
-    // instructions,
-    // ingredients
-    } = recipeDetails
-    // const ingredients = JSON.stringify(ingredientsRec) 
-    const servings = FullRecipe.servings;
-    const instructions = FullRecipe.instructions;
-    const ingredients = JSON.stringify(FullRecipe.ingredients);
-    const veganBit = vegan==='true' ? 1 : 0;
-    const vegetarianBit = vegetarian==='true' ? 1 : 0;
-    const glutenFreeBit = glutenFree==='true' ? 1 : 0;
-    //Add new recipe to DB
-    await DButils.execQuery(`INSERT INTO usersRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings) VALUES ('${user_id}', '${title}', '${image}', '${readyInMinutes}', '${popularity}', '${veganBit}', '${vegetarianBit}', '${glutenFreeBit}', '${instructions}', '${ingredients}', '${servings}')`)
+
+async function getUserRecipes(user_id) {
+    const user_recipes = await DButils.execQuery(`select * from usersRecipes where user_id='${user_id}'`)
+    let recipes =[]
+    user_recipes.map((userRecipe) => recipes.push(createUserRecipe(userRecipe)))
+    return recipes;
 }
+
+// async function saveNewUserRecipe(recipeDetails, user_id) {
+//     const {title, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, fullRecipe} = recipeDetails
+
+//     const servings = fullRecipe.servings;
+//     const instructions = fullRecipe.instructions;
+//     const ingredients = JSON.stringify(fullRecipe.ingredients);
+//     const veganBit = binarySet[vegan];
+//     const vegetarianBit = binarySet[vegetarian];
+//     const glutenFreeBit = binarySet[glutenFree];
+//     await DButils.execQuery(`INSERT INTO usersRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings) VALUES ('${parseInt(user_id)}', '${title}', '${image}', '${readyInMinutes}', '${popularity}', '${parseInt(veganBit)}', '${parseInt(vegetarianBit)}', '${parseInt(glutenFreeBit)}', '${instructions}', '${ingredients}', '${servings}')`)
+// }
+
+async function saveNewUserRecipe(recipeInfo, user_id) {
+    const {
+      title,
+      readyInMinutes,
+      image,
+      popularity,
+      vegan,
+      vegetarian,
+      glutenFree,
+      fullRecipe
+    } = recipeInfo;
+  
+    const servings = fullRecipe.servings;
+    const instructions = fullRecipe.instructions;
+    const ingredients = JSON.stringify(fullRecipe.ingredients);
+    const veganBit = binarySet[vegan];
+    const vegetarianBit = binarySet[vegetarian];
+    const glutenFreeBit = binarySet[glutenFree];
+  
+    await DButils.execQuery(`INSERT INTO usersRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings) VALUES ('${parseInt(user_id)}', '${title}', '${image}', '${readyInMinutes}', '${popularity}', '${parseInt(veganBit)}', '${parseInt(vegetarianBit)}', '${parseInt(glutenFreeBit)}', '${instructions}', '${ingredients}', '${servings}')`)
+  }
+  
 
 async function getUserRecipes(user_id) {
     const user_recipes = await DButils.execQuery(`select * from usersRecipes where user_id='${user_id}'`)
@@ -90,32 +107,46 @@ async function getUserRecipes(user_id) {
 }
 
 function createUserRecipe(userRecipe) {
-    bool = {1:true, 0:false};
-    let recipe = {};
-    recipe.id = userRecipe.id;
-    recipe.user_id = userRecipe.user_id;
-    recipe.title = userRecipe.title;
-    recipe.readyInMinutes = userRecipe.readyInMinutes;
-    recipe.image = userRecipe.image;
-    recipe.popularity = userRecipe.popularity;
-    recipe.glutenFree = bool[userRecipe.glutenFree];
-    recipe.vegetarian = bool[userRecipe.glutenFree];;
-    recipe.vegan = bool[userRecipe.glutenFree];;
-    let servings = bool[userRecipe.glutenFree];;
-    let instructions = userRecipe.instructions;
-    let ingredients =JSON.parse(userRecipe.ingredients); 
-    let FullRecipe = {
-        servings: servings,
-        instructions: instructions,
-        ingredients: ingredients
-    }
-    recipe.FullRecipe = FullRecipe;
+    const {
+      id,
+      user_id,
+      title,
+      readyInMinutes,
+      image,
+      popularity,
+      glutenFree,
+      vegetarian,
+      vegan,
+      servings,
+      instructions,
+      ingredients
+    } = userRecipe;
+  
+    const recipe = {
+      id,
+      user_id,
+      title,
+      readyInMinutes,
+      image,
+      popularity,
+      glutenFree: binaryGet[glutenFree],
+      vegetarian: binaryGet[vegetarian],
+      vegan: binaryGet[vegan],
+      FullRecipe: {
+        servings,
+        instructions,
+        ingredients: JSON.parse(ingredients)
+      }
+    };
+  
     return recipe;
-}
+  }
+  
 
 exports.markAsFavorite = markAsFavorite;
 exports.getFavoriteRecipes = getFavoriteRecipes;
 exports.markRecipeAsWatched = markRecipeAsWatched;
 exports.getLastWatchedRecipes = getLastWatchedRecipes;
 exports.getUserRecipes = getUserRecipes;
-exports.addUserRecipe = addUserRecipe;
+exports.saveNewUserRecipe = saveNewUserRecipe;
+exports.getUserRecipes = getUserRecipes;

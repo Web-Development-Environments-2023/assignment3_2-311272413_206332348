@@ -103,36 +103,6 @@ async function getRandomRecipes(number) {
     }
 }
 
-async function addRecipe(recipe) {
-    const {
-      id,
-      title,
-      readyInMinutes,
-      image,
-      popularity,
-      vegan,
-      vegetarian,
-      glutenFree,
-      servings,
-      instructions,
-      ingredients,
-    } = recipe;
-  
-    // Save the recipe in the database
-    await DButils.execQuery(
-      `INSERT INTO recipes (id, user_id, title, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, servings, instructions) 
-      VALUES (${id}, ${user_id}, '${title}', ${readyInMinutes}, '${image}', ${popularity}, ${vegan}, ${vegetarian}, ${glutenFree}, ${servings}, '${instructions}')`
-    );
-  
-    // Save the recipe's ingredients in the ingredients table
-    for (const ingredient of ingredients) {
-      await DButils.execQuery(
-        `INSERT INTO ingredients (recipe_id, name, amount, unit) 
-        VALUES (${id}, '${ingredient.name}', ${ingredient.amount}, '${ingredient.unit}')`
-      );
-    }
-  }
-
   /**
    * no need in authentication because getting here, meaning user is logged in and authenticated in user.js
    * @param {*} recipes_array - favorites from users db
@@ -149,5 +119,4 @@ async function addRecipe(recipe) {
   exports.getRecipeDetails = getRecipeDetails;
   exports.getRandomRecipes = getRandomRecipes;
   exports.getRecipeFullDetails = getRecipeFullDetails;
-  exports.addRecipe = addRecipe;
   exports.getRecipesPreview = getRecipesPreview;
