@@ -22,8 +22,8 @@ router.use(async function (req, res, next) {
     res.sendStatus(401);
   }
 });
-router.get("/", (req, res) => res.send("im here"));
 
+router.get("/", (req, res) => res.send("im here"));
 
 /**
  * This path gets body with recipeId and save this recipe in the favorites list of the logged-in user
@@ -55,11 +55,10 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
-
 /**
  * this path sends the 3 last watched recipes by user_id 
  */
-router.post('/lastWatchedRecipes', async (req, res, next) =>{
+router.post('/lastSeenRecipes', async (req, res, next) =>{
   try{
     const user_id = req.session.user_id;
     const {
@@ -75,13 +74,12 @@ router.post('/lastWatchedRecipes', async (req, res, next) =>{
   }
 });
 
-
 /**
  * this path return last 3 watched recipes of user_id
  */
-router.get('/lastWatchedRecipes', async (req, res, next) => {
+router.get('/lastSeenRecipes', async (req, res, next) => {
   try{
-    console.log(req.session);
+    console.log(req.session.user_id);
     const user_id = req.session.user_id;
     const recipes_id = await user_utils.getLastWatchedRecipes(user_id);
     res.status(200).send(recipes_id);
@@ -89,7 +87,6 @@ router.get('/lastWatchedRecipes', async (req, res, next) => {
     next(error); 
   }
 });
-
 
 /*
  * Add new recipe as a logged user

@@ -52,7 +52,18 @@ async function getLastWatchedRecipes(user_id){
     }
     const recipeIds = Object.values(watched[0]).slice(1);
 
-    const recipeDetailsPromises = recipeIds.map((recipeID) => getRecipeDetails(recipeID));
+    const recipeDetailsPromises = []
+    // const recipeDetailsPromises = recipeIds.map((recipeID) => getRecipeDetails(recipeID));
+    if (recipeIds[0] !== null) {
+        recipeDetailsPromises.push(getRecipeDetails(recipeIds[0]));
+    }
+    if (recipeIds[1] !== null) {
+        recipeDetailsPromises.push(getRecipeDetails(recipeIds[1]));
+    }    
+    if (recipeIds[2] !== null) {
+        recipeDetailsPromises.push(getRecipeDetails(recipeIds[2]));
+    }
+
     return await Promise.all(recipeDetailsPromises);
 };
 
@@ -63,18 +74,6 @@ async function getUserRecipes(user_id) {
     user_recipes.map((userRecipe) => recipes.push(createUserRecipe(userRecipe)))
     return recipes;
 }
-
-// async function saveNewUserRecipe(recipeDetails, user_id) {
-//     const {title, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, fullRecipe} = recipeDetails
-
-//     const servings = fullRecipe.servings;
-//     const instructions = fullRecipe.instructions;
-//     const ingredients = JSON.stringify(fullRecipe.ingredients);
-//     const veganBit = binarySet[vegan];
-//     const vegetarianBit = binarySet[vegetarian];
-//     const glutenFreeBit = binarySet[glutenFree];
-//     await DButils.execQuery(`INSERT INTO usersRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings) VALUES ('${parseInt(user_id)}', '${title}', '${image}', '${readyInMinutes}', '${popularity}', '${parseInt(veganBit)}', '${parseInt(vegetarianBit)}', '${parseInt(glutenFreeBit)}', '${instructions}', '${ingredients}', '${servings}')`)
-// }
 
 async function saveNewUserRecipe(recipeInfo, user_id) {
     const {
@@ -96,15 +95,14 @@ async function saveNewUserRecipe(recipeInfo, user_id) {
     const glutenFreeBit = binarySet[glutenFree];
   
     await DButils.execQuery(`INSERT INTO usersRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings) VALUES ('${parseInt(user_id)}', '${title}', '${image}', '${readyInMinutes}', '${popularity}', '${parseInt(veganBit)}', '${parseInt(vegetarianBit)}', '${parseInt(glutenFreeBit)}', '${instructions}', '${ingredients}', '${servings}')`)
-  }
-  
+};
 
 async function getUserRecipes(user_id) {
     const user_recipes = await DButils.execQuery(`select * from usersRecipes where user_id='${user_id}'`)
     let recipes =[]
     user_recipes.map((userRecipe) => recipes.push(createUserRecipe(userRecipe)))
     return recipes;
-}
+};
 
 function createUserRecipe(userRecipe) {
     const {
@@ -140,7 +138,7 @@ function createUserRecipe(userRecipe) {
     };
   
     return recipe;
-  }
+};
   
 
 exports.markAsFavorite = markAsFavorite;

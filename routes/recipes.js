@@ -90,9 +90,6 @@ router.get("/search/query/:searchQuery", async (req, res, next) => {
   }
 });
 
-router.get("/history", async(req, res, next) =>{
-  
-})
 
 /**
  * This path returns a full details of a recipe by its id
