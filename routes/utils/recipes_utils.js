@@ -2,11 +2,6 @@ const axios = require("axios");
 const api_domain = "https://api.spoonacular.com/recipes";
 
 /**
- * Get recipes list from spooncular response and extract the relevant recipe data for preview
- * @param {*} recipes_info 
- */
-
-/**
  * @param {*} recipe_id 
  * @returns call spoonacular api
  */
@@ -26,20 +21,21 @@ async function getRecipeInformation(recipe_id) {
  * id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree
  */
 async function getRecipeDetails(recipe_id) {
-    let recipe_info = await getRecipeInformation(recipe_id);
+  
+  let recipe_info = await getRecipeInformation(recipe_id);
 
-    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree } = recipe_info.data;
+  let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree } = recipe_info.data;
 
-    return {
-        id: id,
-        title: title,
-        readyInMinutes: readyInMinutes,
-        image: image,
-        popularity: aggregateLikes,
-        vegan: vegan,
-        vegetarian: vegetarian,
-        glutenFree: glutenFree,
-    }
+  return {
+      id: id,
+      title: title,
+      readyInMinutes: readyInMinutes,
+      image: image,
+      popularity: aggregateLikes,
+      vegan: vegan,
+      vegetarian: vegetarian,
+      glutenFree: glutenFree,
+  }
 }
 
 /**
