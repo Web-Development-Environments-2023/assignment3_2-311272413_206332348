@@ -8,8 +8,7 @@ const api_domain = "https://api.spoonacular.com/recipes";
 
 /**
  * @param {*} recipe_id 
- * @returns information json from spoonacular api
- * id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree
+ * @returns call spoonacular api
  */
 async function getRecipeInformation(recipe_id) {
     return await axios.get(`${api_domain}/${recipe_id}/information`, {
@@ -20,6 +19,12 @@ async function getRecipeInformation(recipe_id) {
     });
 }
 
+/**
+ * 
+ * @param {*} recipe_id 
+ * @returns information json from spoonacular api
+ * id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree
+ */
 async function getRecipeDetails(recipe_id) {
     let recipe_info = await getRecipeInformation(recipe_id);
 

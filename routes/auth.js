@@ -3,11 +3,14 @@ var router = express.Router();
 const MySql = require("../routes/utils/MySql");
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcrypt");
-const { getLastWatchedRecipes } = require("./utils/user_utils");
+const user_utils = require("./utils/user_utils");
 
 var onlineUser = null;
 let watchedRecipes = [];
 
+/**
+ * ----checked----
+ */
 router.post("/Register", async (req, res, next) => {
   try {
     const {
@@ -78,7 +81,7 @@ router.post("/Login", async (req, res, next) => {
 
     // Set cookie
     req.session.user_id = user.user_id;
-    watchedRecipes = getLastWatchedRecipes(user.user_id);
+    watchedRecipes = await user_utils.getLastWatchedRecipes(user.user_id);
     req.session.watchedRecipes= watchedRecipes;
 
     // return cookie
@@ -89,8 +92,12 @@ router.post("/Login", async (req, res, next) => {
   }
 });
 
+
+/**
+ * ---- not checked ----
+ */
 router.post("/Logout", function (req, res) {
-  markRecipeAsWatched(req.session.user_id, watchedRecipes);
+  user_utils.markRecipeAsWatched(req.session.user_id, watchedRecipes);
   req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
   res.send({ success: true, message: "logout succeeded" });
   watchedRecipes = [];

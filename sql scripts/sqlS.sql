@@ -1,4 +1,4 @@
-SELECT * from users;
+SELECT * from grammy_schema.users;
 
 insert into lastwatched (user_id, recipeID_1) values (1, 666554);
 
