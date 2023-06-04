@@ -71,45 +71,6 @@ paths:
           description: Unauthorized. User is not authenticated.
         "404":
           description: Not Found. User session or resource not found.
-  /users/userRecipes:
-    get:
-      tags:
-        - Users
-      summary: Return recipes created by logged in user
-      description: Array of recipes and its description
-      responses:
-        "200":
-          description: Recipes information
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/RecipePreview"
-        "401":
-          description: Unauthorized
-      security:
-        - cookieAuth: []
-    post:
-      tags:
-        - Users
-      summary: Create recipe to user's recipes list 
-      description: Insert recipe to saved users recipes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RecipePreview"
-        required: true
-      responses:
-        "201":
-          description: Recipe was successfully saved
-        "400":
-          description: Failed to upload recipe, wrong parmters
-        "401":
-          description: Unauthorized
-      security:
-        - cookieAuth: []
   /recipes/random:
     get:
       tags:
@@ -163,9 +124,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: array
-          items:
-            type: string
+          type: string
           enum:
               - Dairy
               - Egg
@@ -179,16 +138,14 @@ paths:
               - Sulfite
               - Tree Nut
               - Wheat
-      - name: cuisine
+      - name: Cuisine
         in: query
         description: "Cuisine types for the recipes."
         required: false
         style: form
         explode: true
         schema:
-          type: array
-          items:
-            type: string
+          type: string
           enum:
             - African
             - Asian
@@ -224,9 +181,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: array
-          items:
-            type: string
+          type: string
           enum:
             - Gluten Free
             - Ketogenic
@@ -250,14 +205,14 @@ paths:
                   $ref: '#/components/schemas/RecipePreview'
         "204":
           description: No results found matching the search criteria.
-  /recipes/showRecipe/{recipeId}:
+  /recipes/showRecipe/{recipe_id}:
     get:
       tags:
       - Recipes
       summary: Return preview details on recipe by his ID
       description: Return preview details on recipe by his ID
       parameters:
-      - name: recipeId
+      - name: recipe_id
         in: path
         description: recipe's id
         required: true
@@ -274,7 +229,46 @@ paths:
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
-
+  
+  /users/userRecipes:
+    get:
+      tags:
+        - Users
+      summary: Return recipes created by logged in user
+      description: Array of recipes and its description
+      responses:
+        "200":
+          description: Recipes information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipePreview"
+        "401":
+          description: Unauthorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Users
+      summary: Create recipe to user's recipes list 
+      description: Insert recipe to saved users recipes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipePreview"
+        required: true
+      responses:
+        "201":
+          description: Recipe was successfully saved
+        "400":
+          description: Failed to upload recipe, wrong parmters
+        "401":
+          description: Unauthorized
+      security:
+        - cookieAuth: []
   /users/addNewUserRecipe:
     get:
       tags:
@@ -366,9 +360,28 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Recipe'
+                  $ref: '#/components/schemas/familyRecipe'
         "400":
           description: Bad input parameter.
+    post:
+      tags:
+        - Users
+        - Recipes
+      summary: Create family recipe
+      description: Add a new recipe to the user's family recipes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/familyRecipe"
+        required: true
+      responses:
+        "201":
+          description: Family recipe was successfully created
+        "400":
+          description: Failed to create family recipe due to wrong parameters
+        "401":
+          description: Unauthorized
   /users/favorites:
     get:
       tags:
@@ -399,7 +412,7 @@ paths:
             schema:
               type: object
               properties:
-                reciepeId:
+                recipe_id:
                   type: string
                   description: reciepe's id which the user saved
                   example: 716429
@@ -410,6 +423,7 @@ paths:
           description: user is not authorized
       security:
       - cookieAuth: []
+
 components:
   schemas:
     User:
@@ -611,13 +625,79 @@ components:
           description: Recipe instructions in order.
           items:
             type: string
+    familyRecipe:
+      required:
+        - title
+        - image
+        - readyInMinutes
+        - popularity
+        - vegan
+        - vegetarian
+        - glutenFree
+        - fullRecipe
+      type: object
+      properties:
+        title:
+          type: string
+          description: The recipe name
+          example: Pizza
+        image:
+          type: string
+          format: url
+          description: The recipe image URL
+          example: "https://sugarspunrun.com/wp-content/uploads/2023/02/sourdough-pizza-dough-recipe-6-of-8.jpg"
+        readyInMinutes:
+          type: integer
+          description: The recipe total preparation time in minutes
+          example: 30
+        popularity:
+          type: integer
+          description: The number of likes the recipe has received
+          example: 200
+        vegan:
+          type: boolean
+          description: Indicates if the recipe is vegan
+          example: false
+        vegetarian:
+          type: boolean
+          description: Indicates if the recipe is vegetarian
+          example: true
+        glutenFree:
+          type: boolean
+          description: Indicates if the recipe is gluten-free
+          example: false
+        fullRecipe:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/FullRecipe"
+          description: Full Recipe with the ingredients as keys and amount as value
+        instructions:
+          type: string
+          description: The recipe instructions
+          example: "1. Preheat the oven to 375°F (190°C)..."
+        ingredients:
+          type: string
+          description: The recipe ingredients
+          example: "200g spaghetti, 100g bacon, 2 eggs..."
+        servings:
+          type: integer
+          description: The number of servings the recipe yields
+          example: 2
+        creator:
+          type: string
+          description: The creator or author of the recipe
+          example: John
+        whenToPrepare:
+          type: string
+          description: The recommended time or occasion to prepare the recipe
+          example: Weeknight Dinner
     RecipeIngredients:
       required:
       - ingredients
-      - recipeId
+      - recipe_id
       type: object
       properties:
-        recipeId:
+        recipe_id:
           type: integer
           description: The ID of the recipe.
         ingredients:

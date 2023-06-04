@@ -5,7 +5,7 @@ const binarySet = {"true" : 1, "false" : 0};
 const binaryGet = {1 : true, 0 : false};
 
 async function markAsFavorite(user_id, recipe_id){
-    await DButils.execQuery(`insert into FavoriteRecipes values ('${user_id}',${recipe_id})`);
+    await DButils.execQuery(`insert into favoriterecipes values ('${user_id}',${recipe_id})`);
 };
 
 async function getFavoriteRecipes(user_id){
@@ -138,6 +138,38 @@ function createUserRecipe(userRecipe) {
   
     return recipe;
 };
+
+async function getUserFamilyRecipes(user_id) {
+    const personal_recipes_from_db = await getFamilyRecipes(user_id);
+    result = Promise.all(personal_recipes_from_db);
+    return result;
+};
+
+async function getFamilyRecipes(user_id) {
+    let arr = await DButils.execQuery(
+      `SELECT * FROM familyRecipes where user_id='${user_id}' `
+    );
+    return arr;
+};
+
+async function saveNewFamilyRecipe(recipeInfo, user_id) {
+    const {
+      title,
+      image,
+      readyInMinutes,
+      popularity,
+      vegan,
+      vegetarian,
+      glutenFree,
+      instructions,
+      ingredients,
+      servings,
+      creator,
+      whenToPrepare
+    } = recipeInfo;
+  
+    await DButils.execQuery(`INSERT INTO familyRecipes (user_id, title, image, readyInMinutes, popularity, vegan, vegetarian, glutenFree, instructions, ingredients, servings, creator, whenToPrepare) VALUES (${user_id}, '${title}', '${image}', ${readyInMinutes}, ${popularity}, ${vegan}, ${vegetarian}, ${glutenFree}, '${instructions}', '${ingredients}', ${servings}, '${creator}', '${whenToPrepare}')`);
+};
   
 
 exports.markAsFavorite = markAsFavorite;
@@ -147,3 +179,5 @@ exports.getLastSeenRecipes = getLastSeenRecipes;
 exports.getUserRecipes = getUserRecipes;
 exports.saveNewUserRecipe = saveNewUserRecipe;
 exports.getUserRecipes = getUserRecipes;
+exports.getUserFamilyRecipes = getUserFamilyRecipes;
+exports.saveNewFamilyRecipe = saveNewFamilyRecipe;

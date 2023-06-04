@@ -107,13 +107,39 @@ router.post('/userRecipes', async (req, res, next) => {
 router.get('/userRecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
-    recipes = await user_utils.getUserRecipes(user_id);
+    const recipes = await user_utils.getUserRecipes(user_id);
     if (recipes.length == 0){
-      res.sendStatus(404)
+      res.status(404).send("No recipes saved for this user.")
     }
     else{
       res.status(200).send(recipes);
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/familyRecipes", async (req, res, next) => {
+  try {
+    const recipes = await user_utils.getUserFamilyRecipes(req.session.user_id);
+    res.status(200).send(recipes);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*
+ * Add new family recipe as a logged user
+ */
+router.post('/familyRecipes', async (req, res, next) => {
+  try {
+    const recipe = req.body;
+    const user_id = req.session.user_id;
+
+    // Call the saveRecipe function to save the recipe in the database
+    await user_utils.saveNewFamilyRecipe(recipe, user_id);
+    
+    res.status(200).send("The Recipe was successfully saved to the family recipes");
   } catch (error) {
     next(error);
   }
