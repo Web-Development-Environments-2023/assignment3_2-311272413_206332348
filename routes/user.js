@@ -79,7 +79,6 @@ router.post('/lastSeenRecipes', async (req, res, next) =>{
  */
 router.get('/lastSeenRecipes', async (req, res, next) => {
   try{
-    console.log(req.session.user_id);
     const user_id = req.session.user_id;
     const recipes_id = await user_utils.getLastSeenRecipes(user_id);
     res.status(200).send(recipes_id);
@@ -91,7 +90,7 @@ router.get('/lastSeenRecipes', async (req, res, next) => {
 /*
  * Add new recipe as a logged user
  */
-router.post('/addNewUserRecipe', async (req, res, next) => {
+router.post('/userRecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     const recipe = req.body;
@@ -105,7 +104,7 @@ router.post('/addNewUserRecipe', async (req, res, next) => {
   }
 });
 
-router.get('/getUserRecipes', async (req, res, next) => {
+router.get('/userRecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     recipes = await user_utils.getUserRecipes(user_id);

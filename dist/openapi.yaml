@@ -71,68 +71,79 @@ paths:
           description: Unauthorized. User is not authenticated.
         "404":
           description: Not Found. User session or resource not found.
-  /recipes/getRandomRecipes:
+  /users/userRecipes:
     get:
       tags:
-      - Recipes
-      - Guests
-      summary: Get different random recipes.
-      description: Retrieves three random recipes different from the ones currently being viewed by the client (user or guest).
-      parameters:
-      - name: recipeId1
-        in: query
-        description: ID of the first recipe to be excluded.
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: integer
-      - name: recipeId2
-        in: query
-        description: ID of the second recipe to be excluded.
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: integer
-      - name: recipeId3
-        in: query
-        description: ID of the third recipe to be excluded.
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: integer
+        - Users
+      summary: Return recipes created by logged in user
+      description: Array of recipes and its description
       responses:
         "200":
-          description: Successfully retrieved three new recipes to explore.
+          description: Recipes information
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RecipePreview'
+                  $ref: "#/components/schemas/RecipePreview"
+        "401":
+          description: Unauthorized
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Users
+      summary: Create recipe to user's recipes list 
+      description: Insert recipe to saved users recipes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipePreview"
+        required: true
+      responses:
+        "201":
+          description: Recipe was successfully saved
         "400":
-          description: Invalid or missing parameters
-  /search/recipes/{recipeName}:
+          description: Failed to upload recipe, wrong parmters
+        "401":
+          description: Unauthorized
+      security:
+        - cookieAuth: []
+  /recipes/random:
+    get:
+      tags:
+        - Recipes
+        - Random
+      summary: Explore diffrent random recepies
+      description: send to the client 3 random recepies.
+      responses:
+        "200":
+          description: the server returned 3 new recepies to be explored
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecipePreview"
+  /recipes/search/query/{query}:
     get:
       tags:
       - Users
-      - Guests
       - Recipes
       summary: Search recipes
-      description: Retrieves a list of recipes that contain the specified recipeName and match the optional filters.
+      description: Retrieves a list of recipes return from Spoonacular apiwith filters.
       parameters:
-      - name: recipeName
+      - name: query
         in: path
-        description: String to search for in recipe names.
+        description: query to search.
         required: true
         style: simple
         explode: false
         schema:
           type: string
-          example: Cheesecake
-      - name: size
+          example: Pizza
+      - name: number
         in: query
         description: "Size of the returned list. Allowed values: 15, 10, 5. Default is 5."
         required: false
@@ -145,30 +156,89 @@ paths:
           - 15
           - 10
           - 5
-      - name: cuisineFilter
+      - name: intolerance
         in: query
-        description: Cuisine filters to apply.
+        description: "Intolerances for the recipes."
         required: false
         style: form
         explode: true
         schema:
-          type: string
-      - name: dietFilter
+          type: array
+          items:
+            type: string
+          enum:
+              - Dairy
+              - Egg
+              - Gluten
+              - Grain
+              - Peanut
+              - Seafood
+              - Sesame
+              - Shellfish
+              - Soy
+              - Sulfite
+              - Tree Nut
+              - Wheat
+      - name: cuisine
         in: query
-        description: Diet filters to apply.
+        description: "Cuisine types for the recipes."
         required: false
         style: form
         explode: true
         schema:
-          type: string
-      - name: intoleranceFilter
+          type: array
+          items:
+            type: string
+          enum:
+            - African
+            - Asian
+            - American
+            - British
+            - Cajun
+            - Caribbean
+            - Chinese
+            - Eastern European
+            - European
+            - French
+            - German
+            - Greek
+            - Indian
+            - Irish
+            - Italian
+            - Japanese
+            - Jewish
+            - Korean
+            - Latin American
+            - Mediterranean
+            - Mexican
+            - Middle Eastern
+            - Nordic
+            - Southern
+            - Spanish
+            - Thai
+            - Vietnamese
+      - name: diet
         in: query
-        description: Intolerance filters to apply.
+        description: "Diet types for the recipes."
         required: false
         style: form
         explode: true
         schema:
-          type: string
+          type: array
+          items:
+            type: string
+          enum:
+            - Gluten Free
+            - Ketogenic
+            - Vegetarian
+            - Lacto-Vegetarian
+            - Ovo-Vegetarian
+            - Vegan
+            - Pescetarian
+            - Paleo
+            - Primal
+            - Low FODMAP
+            - Whole30
       responses:
         "200":
           description: Recipes found matching the search criteria.
@@ -180,7 +250,7 @@ paths:
                   $ref: '#/components/schemas/RecipePreview'
         "204":
           description: No results found matching the search criteria.
-  /recipes/{recipeId}:
+  /recipes/showRecipe/{recipeId}:
     get:
       tags:
       - Recipes
@@ -267,19 +337,19 @@ paths:
     post:
       tags:
       - Users
-      summary: Add a recipe to user's last seen.
-      description: Adds a new recipe to the last seen recipes of the logged-in user.
+      summary: Update logged in user last seen recipes.
+      description: 3 Last seen recipes of the logged-in user.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RecipePreview'
+              $ref: '#/components/schemas/lastSeenRecipes'
         required: true
       responses:
         "201":
-          description: A new recipe has been added to the last seen recipes.
+          description: Last seen recipes updated.
         "400":
-          description: Wrong input parameter.
+          description: At least one recipe id is wrong!.
   /users/familyRecipes:
     get:
       tags:
@@ -407,7 +477,7 @@ components:
           description: Password should contain at least one number and one special character.
           format: password
           example: pass123!
-      description: Object containing login credentials.   
+      description: Object containing login credentials.
     RecipePreview:
       required:
         - fullRecipe
@@ -503,9 +573,22 @@ components:
         unit:
           type: string
           # example: g
-
-
-    
+    lastSeenRecipes:
+          type: object
+          properties:
+            recipeID_1:
+              type: integer
+              description: First seen recipe id.
+              example: 648852
+            recipeID_2:
+              type: integer
+              description: Second seen recipe id.
+              example: 648855
+            recipeID_3:
+              type: integer
+              description: Third seen recipe id.
+              example: null
+          description: Object containing login credentials.   
     Recipe:
       required:
       - Instructions
