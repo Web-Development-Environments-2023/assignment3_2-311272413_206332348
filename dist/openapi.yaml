@@ -51,6 +51,13 @@ paths:
       responses:
         "200":
           description: Successful authentication. The session ID is returned in a cookie named `session`.
+          headers:
+            Set-Cookie:
+              style: simple
+              explode: false
+              schema:
+                type: string
+                example: session=87s97sdhgf279293f8w0e9
           content:
             application/json:
               schema:
@@ -75,7 +82,6 @@ paths:
     get:
       tags:
         - Recipes
-        - Random
       summary: Explore diffrent random recepies
       description: send to the client 3 random recepies.
       responses:
@@ -267,47 +273,6 @@ paths:
           description: Failed to upload recipe, wrong parmters
         "401":
           description: Unauthorized
-      security:
-        - cookieAuth: []
-  /users/addNewUserRecipe:
-    get:
-      tags:
-        - Users
-      summary: Return the recipes that were saved by user
-      description: Get an array of recipes that were saved by a specific user
-      responses:
-        "200":
-          description: data about the user's favorites recipes returned
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/RecipePreview"
-        "401":
-          description: user is not authorized
-        "404":
-          description: user recepies doesn't exist.
-      security:
-        - cookieAuth: []
-    post:
-      tags:
-        - Users
-      summary: save recipe in my recipes list of a user
-      description: save recipe in my recipes list of a user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RecipePreview"
-        required: true
-      responses:
-        "201":
-          description: The Recipe successfully saved
-        "400":
-          description: the Recipe upload faild, wrong parmters
-        "401":
-          description: user is not authorized
       security:
         - cookieAuth: []
   /users/lastSeenRecipes:
@@ -667,10 +632,7 @@ components:
           description: Indicates if the recipe is gluten-free
           example: false
         fullRecipe:
-          type: object
-          additionalProperties:
-            $ref: "#/components/schemas/FullRecipe"
-          description: Full Recipe with the ingredients as keys and amount as value
+          $ref: "#/components/schemas/FullRecipe"
         instructions:
           type: string
           description: The recipe instructions

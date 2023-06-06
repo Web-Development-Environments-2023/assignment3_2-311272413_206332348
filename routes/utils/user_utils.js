@@ -86,9 +86,9 @@ async function saveNewUserRecipe(recipeInfo, user_id) {
       fullRecipe
     } = recipeInfo;
   
-    const servings = fullRecipe.servings;
-    const instructions = fullRecipe.instructions;
-    const ingredients = JSON.stringify(fullRecipe.ingredients);
+    const servings = fullRecipe.additionalProp1.servings;
+    const instructions = fullRecipe.additionalProp1.instructions;
+    const ingredients = JSON.stringify(fullRecipe.additionalProp1.ingredients);
     const veganBit = binarySet[vegan];
     const vegetarianBit = binarySet[vegetarian];
     const glutenFreeBit = binarySet[glutenFree];

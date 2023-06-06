@@ -4,8 +4,7 @@ const DButils = require("./utils/DButils");
 const user_utils = require("./utils/user_utils");
 const recipe_utils = require("./utils/recipes_utils");
 
-//----------------checked----------------
-
+router.get("/", (req, res) => res.send("im here"));
 
 /**
  * Authenticate all incoming requests by middleware
@@ -22,8 +21,6 @@ router.use(async function (req, res, next) {
     res.sendStatus(401);
   }
 });
-
-router.get("/", (req, res) => res.send("im here"));
 
 /**
  * This path gets body with recipeId and save this recipe in the favorites list of the logged-in user
