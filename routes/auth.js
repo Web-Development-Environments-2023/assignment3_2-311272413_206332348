@@ -7,9 +7,6 @@ const user_utils = require("./utils/user_utils");
 
 var onlineUser = null;
 
-/**
- * ----checked----
- */
 router.post("/Register", async (req, res, next) => {
   try {
     const {

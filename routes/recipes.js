@@ -5,9 +5,6 @@ const search_util = require("./utils/search_utils");
 
 router.get("/", (req, res) => res.send("im here"));
 
-
-//----------------checked----------------
-
 /**
  * This path returns details of 3 different recipes
  * usage: http://localhost:3000/recipes/random
