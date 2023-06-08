@@ -1,12 +1,35 @@
 const axios = require("axios");
-const api_domain = "https://api.spoonacular.com/recipes/complexSearch";
+const api_domain = "https://api.spoonacular.com/recipes/complexSearch?";
 const recipes_utils = require("./recipes_utils");
 
 async function getSearchResult(searchParams) {
-    const response = await axios.get(`${api_domain}`, {
+    let query = updateQuery(searchParams)
+    const response = await axios.get(`${query}`, {
         params: searchParams
     });
     return response.data.results;
+}
+
+function updateQuery(searchParams){
+    let query = api_domain;
+    if(searchParams.query) {
+        query += `query=${searchParams.query}&`;
+    }
+    if(searchParams.cuisine) {
+        query += `cuisine=${searchParams.cuisine}&`;
+    }
+    if(searchParams.diet) {
+        query += `diet=${searchParams.diet}&`;
+    }
+    if(searchParams.intolerances) {
+        query += `intolerances=${searchParams.intolerances}&`;
+    }
+    if(searchParams.number) {
+        query += `number=${searchParams.number}&`;
+    }
+
+    query += "addRecipeInformation=true&instructionsRequired=true&fillIngredients=true";
+    return query
 }
 
 async function searchRecipes(searchParams) {

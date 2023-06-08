@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 const search_util = require("./utils/search_utils");
-const recipes = require("./auth");
 
 router.get("/", (req, res) => res.send("im here"));
 
@@ -39,12 +38,12 @@ router.get('/showRecipe/:recipe_id', async (req,res,next)=>{
 /**
  * possible values
  * values
- * intolerance = Dairy, ,Egg, Gluten, Grain, Peanut, Seafood, Sesame, Shellfish, Soy ,Sulfite ,Tree Nut, Wheat
+ * intolerances = Dairy, ,Egg, Gluten, Grain, Peanut, Seafood, Sesame, Shellfish, Soy ,Sulfite ,Tree Nut, Wheat
  * cusine = African, Asian, American, British, Cajun, Caribbean, Chinese, Eastern European, European, French
          German, Greek, Indian, Irish, Italian ,Japanese ,Jewish ,Korean , Latin American, Mediterranean, Mexican
          Middle Eastern, Nordic, Southern, Spanish, Thai, Vietnamese
  * diet = Gluten Free, Ketogenic, Vegetarian, Lacto-Vegetarian, Ovo-Vegetarian, Vegan, Pescetarian, Paleo, Primal, Low FODMAP, Whole30
- * usage: http://localhost:3000/recipes/search/query/burger?amount=5&intolerance=Sesame&cusine=German&diet=Gluten Free
+ * usage: http://localhost:3000/recipes/search/query/burger?amount=5&intolerances=Sesame&cusine=German&diet=Gluten Free
  * in frontend - client - there will be only 3 options -> 5(default), 10, 15
  * now every number is allowd but from client side only 3 legal options.
  */
@@ -54,12 +53,12 @@ router.get("/search/query/:searchQuery", async (req, res, next) => {
   let searchParams = {};
   searchParams.query = searchQuery;
 
-  let {number, intolerance, Cuisine ,diet} = req.query;
+  let {number, intolerances, cuisine ,diet} = req.query;
   
-  if(intolerance)
-    searchParams.intolerance = intolerance;
-  if(Cuisine)
-    searchParams.Cuisine = Cuisine;
+  if(intolerances)
+    searchParams.intolerances = intolerances;
+  if(cuisine)
+    searchParams.cuisine = cuisine;
 
   searchParams.number = parseInt(number);
   if (number === undefined) {
@@ -68,9 +67,6 @@ router.get("/search/query/:searchQuery", async (req, res, next) => {
 
   if(diet)
     searchParams.diet = diet;
-  searchParams.instructionsRequired = true;
-  searchParams.addRecipeInformation = true;
-  searchParams.fillIngredients = true;
 
   searchParams.apiKey = process.env.spooncular_apiKey;
   
@@ -78,7 +74,7 @@ router.get("/search/query/:searchQuery", async (req, res, next) => {
     // const user_id = req.session.user_id;
     const recipes = await search_util.searchRecipes(searchParams)
     if (recipes.length == 0){
-      res.sendStatus(404);
+      res.status(404).send("No Recipes found");
     }
     else{
       res.status(200).send(recipes);

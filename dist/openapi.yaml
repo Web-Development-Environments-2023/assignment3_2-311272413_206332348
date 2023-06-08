@@ -123,63 +123,63 @@ paths:
           - 15
           - 10
           - 5
-      - name: intolerance
+      - name: intolerances
         in: query
-        description: "Intolerances for the recipes."
+        description: "intolerances for the recipes."
         required: false
         style: form
         explode: true
         schema:
           type: string
           enum:
-              - Dairy
-              - Egg
-              - Gluten
-              - Grain
-              - Peanut
-              - Seafood
-              - Sesame
-              - Shellfish
-              - Soy
-              - Sulfite
-              - Tree Nut
-              - Wheat
-      - name: Cuisine
+              - dairy
+              - egg
+              - gluten
+              - grain
+              - peanut
+              - seafood
+              - sesame
+              - shellfish
+              - soy
+              - sulfite
+              - tree Nut
+              - wheat
+      - name: cuisine
         in: query
-        description: "Cuisine types for the recipes."
+        description: "cuisine types for the recipes."
         required: false
         style: form
         explode: true
         schema:
           type: string
           enum:
-            - African
-            - Asian
-            - American
-            - British
-            - Cajun
-            - Caribbean
-            - Chinese
-            - Eastern European
-            - European
-            - French
-            - German
-            - Greek
-            - Indian
-            - Irish
-            - Italian
-            - Japanese
-            - Jewish
-            - Korean
-            - Latin American
-            - Mediterranean
-            - Mexican
-            - Middle Eastern
-            - Nordic
-            - Southern
-            - Spanish
-            - Thai
-            - Vietnamese
+            - african
+            - asian
+            - american
+            - british
+            - cajun
+            - caribbean
+            - chinese
+            - eastern European
+            - european
+            - french
+            - german
+            - greek
+            - indian
+            - irish
+            - italian
+            - japanese
+            - jewish
+            - korean
+            - latin American
+            - mediterranean
+            - mexican
+            - middle Eastern
+            - nordic
+            - southern
+            - spanish
+            - thai
+            - vietnamese
       - name: diet
         in: query
         description: "Diet types for the recipes."
@@ -189,17 +189,17 @@ paths:
         schema:
           type: string
           enum:
-            - Gluten Free
-            - Ketogenic
-            - Vegetarian
-            - Lacto-Vegetarian
-            - Ovo-Vegetarian
-            - Vegan
-            - Pescetarian
-            - Paleo
-            - Primal
-            - Low FODMAP
-            - Whole30
+            - gluten free
+            - ketogenic
+            - vegetarian
+            - lacto-Vegetarian
+            - ovo-Vegetarian
+            - vegan
+            - pescetarian
+            - paleo
+            - primal
+            - low FODMAP
+            - whole30
       responses:
         "200":
           description: Recipes found matching the search criteria.
